@@ -748,25 +748,25 @@ function createOrbitRing(radius, color, opacity) {
 
 // ─── FLOATING PHOTOS ───
 const photoFiles = [
-  "photos/p01.jpg",
-  "photos/p02.jpg",
-  "photos/p03.jpg",
-  "photos/p04.jpg",
-  "photos/p05.jpg",
-  "photos/p06.jpg",
-  "photos/p07.jpg",
-  "photos/p08.jpg",
-  "photos/p09.jpg",
-  "photos/p10.jpg",
-  "photos/p11.jpg",
-  "photos/p12.jpg",
-  "photos/p13.jpg",
-  "photos/p14.jpg",
-  "photos/p15.jpg",
-  "photos/p16.jpg",
-  "photos/p17.jpg",
-  "photos/p18.jpg",
-  "photos/p19.jpg"
+  "p01.jpg",
+  "p02.jpg",
+  "p03.jpg",
+  "p04.jpg",
+  "p05.jpg",
+  "p06.jpg",
+  "p07.jpg",
+  "p08.jpg",
+  "p09.jpg",
+  "p10.jpg",
+  "p11.jpg",
+  "p12.jpg",
+  "p13.jpg",
+  "p14.jpg",
+  "p15.jpg",
+  "p16.jpg",
+  "p17.jpg",
+  "p18.jpg",
+  "p19.jpg"
 ];
 
 const photoMeshes = [];
