@@ -36,6 +36,66 @@ const bubbleBox = document.getElementById('bubbleBox');
 const bubbleText = document.getElementById('bubbleText');
 const catSpeech = document.getElementById('catSpeech');
 
+// ─── DANCER CAT (standby) ───
+const dancerCat = document.getElementById('dancerCat');
+const dancerCatSpeech = document.getElementById('dancerCatSpeech');
+
+const dancerLines = [
+  "Meow meow meow meow meow",
+  "Dancing dancing meow meow",
+  "Hey meow look I am dancing",
+  "Your wonderful meow meow",
+  "Happy 11th Meow meow",
+  "HAPPY 11TH MEOW MEOW MEOW"
+];
+
+let dancerLineIndex = 0;
+let dancerClickCount = 0;
+let dancerSpecialMessageActive = false;
+
+function showDancerLine(text) {
+  dancerCatSpeech.style.opacity = '0';
+  setTimeout(() => {
+    dancerCatSpeech.textContent = text;
+    dancerCatSpeech.style.opacity = '1';
+  }, 300);
+}
+
+// Auto-cycle through dancer lines, looping forever
+function cycleDancerLines() {
+  if (!dancerSpecialMessageActive) {
+    showDancerLine(dancerLines[dancerLineIndex % dancerLines.length]);
+    dancerLineIndex++;
+  }
+}
+
+// Show first line immediately, then cycle every 3s
+cycleDancerLines();
+setInterval(cycleDancerLines, 3000);
+
+// Click handling
+dancerCat.addEventListener('pointerdown', (e) => {
+  e.stopPropagation();
+  dancerClickCount++;
+  dancerSpecialMessageActive = true;
+
+  if (dancerClickCount === 1) {
+    showDancerLine("Meow meow meow I'm just dancing");
+  } else if (dancerClickCount === 2) {
+    showDancerLine("I told you meow meow");
+  } else {
+    // After 2 clicks, go back to normal cycling lines
+    dancerSpecialMessageActive = false;
+    cycleDancerLines();
+    return;
+  }
+
+  // Resume normal cycling 3s after a special click message
+  setTimeout(() => {
+    dancerSpecialMessageActive = false;
+  }, 3000);
+});
+
 let noCount = 0;
 const noLines = [
   "Are you sure? Huhu 🥺",
@@ -850,7 +910,7 @@ const messages = [
   "DID YOU LIKE IT?",
   "HAPPY MONTHSARY SAAKONG LALAB",
   "BUYAG 3 YEARS M.U",
-  "10 MONTHS AS YOUR PARTNER IN LIFE",
+  "11 MONTHS AS YOUR PARTNER IN LIFE",
   "THANK YOU FOR THE LOVE AND CARE",
   "I APPRECIATE YOU VERY MUCH",
   "I HAVE NO REGRETS LOVING YOU",
