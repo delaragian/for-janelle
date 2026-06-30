@@ -73,6 +73,15 @@ function cycleDancerLines() {
 cycleDancerLines();
 setInterval(cycleDancerLines, 3000);
 
+// One-time line when the catch-the-cat screen finally appears (after quiz)
+function dancerSayCatchLine() {
+  dancerSpecialMessageActive = true;
+  showDancerLine("Catch this idiot one meow");
+  setTimeout(() => {
+    dancerSpecialMessageActive = false;
+  }, 3000);
+}
+
 // Click handling
 dancerCat.addEventListener('pointerdown', (e) => {
   e.stopPropagation();
@@ -135,6 +144,27 @@ for (let i = 0; i < tuftCount; i++) {
 
   tuft.style.transform = `scale(${scale})`;
   grassRow.appendChild(tuft);
+}
+
+// Same grass generator, but for the intro screen
+const introGrassRow = document.getElementById('introGrassRow');
+for (let i = 0; i < tuftCount; i++) {
+  const tuft = document.createElement('div');
+  tuft.className = 'tuft';
+  tuft.style.left = (Math.random() * 92) + '%';
+  tuft.style.top = (Math.random() * 92) + '%';
+  const scale = 0.7 + Math.random() * 0.9;
+  tuft.style.animationDelay = (Math.random() * 2) + 's';
+  tuft.style.animationDuration = (1.8 + Math.random() * 1.5) + 's';
+
+  for (let j = 0; j < 4; j++) {
+    const spike = document.createElement('div');
+    spike.className = 'spike';
+    tuft.appendChild(spike);
+  }
+
+  tuft.style.transform = `scale(${scale})`;
+  introGrassRow.appendChild(tuft);
 }
 
 function runCatLoop() {
@@ -241,6 +271,17 @@ runningCat.addEventListener('pointerdown', (e) => {
 window.handleYes = function() {
   bubbleText.innerHTML = "Yeyyy!! 🎉💚 Hehe wait lang ha...";
   document.getElementById('bubbleButtons').style.display = 'none';
+
+  // Fade out pre-galaxy music before galaxy music takes over
+  let fadeOut = setInterval(() => {
+    if (bgMusicPre.volume > 0.05) {
+      bgMusicPre.volume -= 0.05;
+    } else {
+      bgMusicPre.pause();
+      bgMusicPre.currentTime = 0;
+      clearInterval(fadeOut);
+    }
+  }, 80);
 
   const galaxyEl = document.getElementById('galaxy');
   const uiEl = document.getElementById('ui');
@@ -1047,6 +1088,12 @@ bgMusic.loop = true;
 bgMusic.volume = 0.5;
 bgMusic.preload = 'auto'; // ← preloads the file in background before tap
 
+// ─── PRE-GALAXY MUSIC (intro/quiz/catch-the-cat) ───
+const bgMusicPre = new Audio('music2.mp3');
+bgMusicPre.loop = true;
+bgMusicPre.volume = 0.5;
+bgMusicPre.preload = 'auto';
+
 function playMusic() {
   bgMusic.play().catch(e => console.log('Music blocked:', e));
 }
@@ -1258,3 +1305,205 @@ window.addEventListener('resize', () => {
   bgCanvas.width = window.innerWidth;
   bgCanvas.height = window.innerHeight;
 });
+
+// ═══════════════════════════════════════════
+// INTRO SEQUENCE (chase cat → greet cat)
+// ═══════════════════════════════════════════
+const introScreen = document.getElementById('introScreen');
+const introCatWrap = document.getElementById('introCatWrap');
+const introCatImg = document.getElementById('introCatImg');
+const introSpeech = document.getElementById('introSpeech');
+const quizScreen = document.getElementById('quizScreen');
+const catScreenEl = document.getElementById('catScreen');
+
+// Hide quiz + cat screens at start; only intro shows
+quizScreen.classList.add('hidden');
+catScreenEl.classList.add('hidden');
+
+const chaseLines = [
+  "Meow meow meow",
+  "Ugh! What is this I can't meow meow",
+  "Here ya go meow meow",
+  "Where ya going meow",
+  "Chump chump chump meow",
+  "Come here! Meow!"
+];
+
+const greetLines = [
+  "Oh finally! Here you are mah love",
+  "Welcome to my meow meow meow",
+  "Now listen carefully",
+  "Meow meow meow meow meow meow",
+  "Did you get it meow?",
+  "WAHAHAHAHAHAHA"
+];
+
+function showIntroLine(text) {
+  introSpeech.style.opacity = '0';
+  setTimeout(() => {
+    introSpeech.textContent = text;
+    introSpeech.style.opacity = '1';
+  }, 300);
+}
+
+function playIntroLines(lines, onDone) {
+  let i = 0;
+  showIntroLine(lines[i]);
+  i++;
+  const interval = setInterval(() => {
+    if (i >= lines.length) {
+      clearInterval(interval);
+      setTimeout(onDone, 2000);
+      return;
+    }
+    showIntroLine(lines[i]);
+    i++;
+  }, 2200);
+}
+
+function startIntroSequence() {
+  introCatWrap.classList.add('chasing');
+  playIntroLines(chaseLines, () => {
+    // Switch to greet cat, stop chasing animation
+    introCatWrap.classList.remove('chasing');
+    introCatImg.src = 'greetcat.gif';
+    playIntroLines(greetLines, () => {
+      // Transition to quiz
+      introScreen.style.opacity = '0';
+      setTimeout(() => {
+        introScreen.classList.add('hidden');
+        startQuiz();
+      }, 600);
+    });
+  });
+}
+
+bgMusicPre.play().catch(e => console.log('Pre-music blocked:', e));
+startIntroSequence();
+
+// ═══════════════════════════════════════════
+// QUIZ SEQUENCE
+// ═══════════════════════════════════════════
+const quizTitle = document.getElementById('quizTitle');
+const quizChoicesEl = document.getElementById('quizChoices');
+const quizCatSpeech = document.getElementById('quizCatSpeech');
+
+const quizData = [
+  {
+    title: "Sport",
+    choices: [
+      { img: "quiz1_1.jpg", line: "Hehe yey!! Opkors you'd choose that, you know me very well meow meow" },
+      { img: "quiz1_2.jpg", line: "Meowwww I don't play that meow ow kinda a lil bit" },
+      { img: "quiz1_3.jpg", line: "Meow meow meow nahhhhh mwuahhh" },
+      { img: "quiz1_4.jpg", line: "Bola? Bola bola bola bola meow meow!" }
+    ]
+  },
+  {
+    title: "Hobby",
+    choices: [
+      { img: "quiz2_1.jpg", line: "Mah hand is kinda lazy for that meow meow" },
+      { img: "quiz2_2.jpg", line: "Scrap book book? Meowwwwwww" },
+      { img: "quiz2_3.jpg", line: "Meow yey! Meow yey! Meow yey! That's it!" },
+      { img: "quiz2_4.jpg", line: "Mah head hurts for that huhu meow meow meow" }
+    ]
+  },
+  {
+    title: "Sawsawan",
+    choices: [
+      { img: "quiz3_1.jpg", line: "Pait Meow meow meow meow meow meow" },
+      { img: "quiz3_2.jpg", line: "Yummy meow! HAHAHAHAHAHAHAHAHAH" }
+    ]
+  },
+  {
+    title: "Yanyan's Porma Taste",
+    choices: [
+      { img: "quiz4_1.jpg", line: "Gisigisi mana HAHAHAHAHAHHA aw oo diay meow meow meow" },
+      { img: "quiz4_2.jpg", line: "Not mah style momomomomomomeowwwwwwwww" },
+      { img: "quiz4_3.jpg", line: "APPP gamayyyyyyyy HAHAHAHAHAHAHAH" },
+      { img: "quiz4_4.jpg", line: "Yessssssssss very good choice that's me meowwwwwwwwww" }
+    ]
+  },
+  {
+    title: "Ride",
+    choices: [
+      { img: "quiz5_1.jpg", line: "Wewsmeow cooooool graghhhhhhh broom broomeow" },
+      { img: "quiz5_2.jpg", line: "WAHAHAHAHAHAHAHAHAHAHAHAH roarrrrr aw no meow diay" },
+      { img: "quiz5_3.jpg", line: "Oi, aw? Broom broom? nahmeow" }
+    ]
+  }
+];
+
+let quizIndex = 0;
+let quizAnswered = false;
+
+function startQuiz() {
+  quizScreen.classList.remove('hidden');
+  quizScreen.style.opacity = '0';
+  requestAnimationFrame(() => { quizScreen.style.opacity = '1'; });
+  quizIndex = 0;
+  renderQuizItem();
+}
+
+function renderQuizItem() {
+  quizAnswered = false;
+  const item = quizData[quizIndex];
+  quizTitle.textContent = item.title;
+  quizChoicesEl.innerHTML = '';
+
+  const count = item.choices.length;
+  quizChoicesEl.className = '';
+  if (count === 2) quizChoicesEl.classList.add('layout-2');
+  if (count === 3) quizChoicesEl.classList.add('layout-3');
+
+  item.choices.forEach((choice, i) => {
+    const div = document.createElement('div');
+    div.className = 'quizChoice';
+    div.innerHTML = `<img src="${choice.img}" alt="" />`;
+    div.addEventListener('click', () => handleQuizChoice(div, choice));
+    quizChoicesEl.appendChild(div);
+  });
+
+  // Stable waiting line
+  quizCatSpeech.style.opacity = '0';
+  setTimeout(() => {
+    quizCatSpeech.textContent = "Now mah love let me meow meow you";
+    quizCatSpeech.style.opacity = '1';
+  }, 300);
+}
+
+function handleQuizChoice(chosenEl, choice) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  const allChoices = quizChoicesEl.querySelectorAll('.quizChoice');
+  allChoices.forEach(el => {
+    if (el === chosenEl) {
+      el.classList.add('chosen');
+    } else {
+      el.classList.add('faded');
+    }
+  });
+
+  quizCatSpeech.style.opacity = '0';
+  setTimeout(() => {
+    quizCatSpeech.textContent = choice.line;
+    quizCatSpeech.style.opacity = '1';
+  }, 300);
+
+  setTimeout(() => {
+    quizIndex++;
+    if (quizIndex < quizData.length) {
+      renderQuizItem();
+    } else {
+      // Quiz finished — transition to existing catch-the-cat screen
+      quizScreen.style.opacity = '0';
+      setTimeout(() => {
+        quizScreen.classList.add('hidden');
+        catScreenEl.classList.remove('hidden');
+        catScreenEl.style.opacity = '0';
+        requestAnimationFrame(() => { catScreenEl.style.opacity = '1'; });
+        setTimeout(dancerSayCatchLine, 3000);
+      }, 600);
+    }
+  }, 4000);
+}
