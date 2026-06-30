@@ -209,9 +209,6 @@ window.handleYes = function() {
         if (e.propertyName !== 'opacity') return;
         galaxyEl.removeEventListener('transitionend', onBloom);
         startHeartFormation();
-        startHeartFormation();
-        animate();                          // start rendering only now
-        setInterval(createShootingStar, 250); // start shooting stars only now
       }, { once: true });
 
     }, 800); // matches #catScreen fade duration
@@ -288,6 +285,8 @@ function createShootingStar() {
     life: 1.0
   });
 }
+
+setInterval(createShootingStar, 250);
 
 // ─── 3D PARTICLE HEART ───
 function heartPoint(t) {
@@ -1102,6 +1101,8 @@ if (hintEl) {
   updatePhotos(time, isMoving);
   renderer.render(scene, camera);
 }
+
+animate();
 
 // ─── RESIZE ───
 window.addEventListener('resize', () => {
