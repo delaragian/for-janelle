@@ -1399,7 +1399,7 @@ function startIntroSequence() {
 const tapOverlay = document.getElementById('tapToStart');
 
 // Always show tap screen — guarantees music plays on all mobile browsers
-tapOverlay.addEventListener('pointerdown', () => {
+document.getElementById('tapBtn').addEventListener('click', () => {
   tapOverlay.classList.add('hidden');
   setTimeout(() => tapOverlay.remove(), 700);
   bgMusicPre.volume = 0.5;
