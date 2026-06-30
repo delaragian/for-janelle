@@ -586,12 +586,16 @@ body {
   text-shadow: 0 0 16px rgba(255,255,255,0.7);
   margin-bottom: 14px;
 }
-#tapHint {
+#tapBtn {
   font-family: 'Dancing Script', cursive;
   color: #00ff88;
   font-size: clamp(16px, 4vw, 20px);
   text-shadow: 0 0 10px rgba(0,255,136,0.8);
   animation: tapFade 1.8s ease-in-out infinite;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
 }
 @keyframes tapBounce {
   0%, 100% { transform: translateY(0px); }
