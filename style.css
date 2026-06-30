@@ -320,3 +320,37 @@ body {
   height: auto;
   display: block;
 }
+
+/* ─── DANCER CAT (standby, background only) ─── */
+#dancerCat {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 101;
+  cursor: pointer;
+  user-select: none;
+  filter: drop-shadow(0 0 10px rgba(0,255,136,0.5));
+}
+
+#dancerCatImg {
+  width: 64px;
+  height: auto;
+  display: block;
+}
+
+#dancerCatSpeech {
+  position: absolute;
+  bottom: 80px;
+  right: 10px;
+  max-width: 150px;
+  color: #00ff88;
+  font-family: 'Dancing Script', cursive;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: right;
+  text-shadow: 0 0 12px rgba(0,255,136,0.9), 0 0 4px rgba(0,0,0,0.8);
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  opacity: 0;
+  z-index: 102;
+}
