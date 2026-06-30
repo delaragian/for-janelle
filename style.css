@@ -20,6 +20,7 @@ body {
   overflow: hidden;
   transition: opacity 0.8s ease;
 }
+#catScreen.hidden { display: none; }
 
 /* Phone boundary box */
 #phoneBox {
@@ -340,17 +341,219 @@ body {
 
 #dancerCatSpeech {
   position: absolute;
-  bottom: 80px;
-  right: 10px;
-  max-width: 150px;
+  bottom: 18px;
+  right: 84px;          /* sits just left of the dancer cat (cat is right:14px, ~64px wide) */
+  max-width: 170px;
+  background: rgba(0,0,0,0.55);
+  border-radius: 14px;
+  padding: 8px 12px;
   color: #00ff88;
   font-family: 'Dancing Script', cursive;
   font-size: 18px;
   font-weight: 600;
-  text-align: right;
+  text-align: left;
   text-shadow: 0 0 12px rgba(0,255,136,0.9), 0 0 4px rgba(0,0,0,0.8);
   pointer-events: none;
   transition: opacity 0.5s ease;
   opacity: 0;
   z-index: 102;
+}
+
+/* ─── INTRO CHASE/GREET SCREEN ─── */
+#introScreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #03100a;
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s ease;
+}
+#introScreen.hidden { display: none; }
+
+#introPhoneBox {
+  position: relative;
+  width: min(390px, 92vw);
+  height: min(720px, 88vh);
+  border: 2px solid rgba(0,255,136,0.25);
+  border-radius: 36px;
+  background: radial-gradient(circle at 50% 40%, #0a2e16 0%, #051a0c 70%, #030f08 100%);
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0,255,136,0.12);
+}
+
+#introCatWrap {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 90px;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 10px rgba(0,255,136,0.5));
+  z-index: 5;
+}
+#introCatWrap img { width: 100%; display: block; }
+
+#introCatWrap.chasing {
+  animation: chaseCircle 3.5s linear infinite;
+}
+
+@keyframes chaseCircle {
+  0%   { transform: translate(-50%, -50%) rotate(0deg) translateX(70px) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg) translateX(70px) rotate(-360deg); }
+}
+
+#introSpeech {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  text-align: center;
+  color: #ffffff;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 600;
+  text-shadow: 0 0 12px rgba(255,255,255,0.9), 0 0 4px rgba(0,0,0,0.8);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 5;
+}
+
+/* ─── QUIZ SCREEN ─── */
+#quizScreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #03100a;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s ease;
+}
+#quizScreen.hidden { display: none; }
+
+#quizPhoneBox {
+  position: relative;
+  width: min(390px, 92vw);
+  height: min(720px, 88vh);
+  border: 2px solid rgba(0,255,136,0.25);
+  border-radius: 36px;
+  background: radial-gradient(circle at 50% 40%, #0a2e16 0%, #051a0c 70%, #030f08 100%);
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0,255,136,0.12);
+  padding: 24px 18px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#quizTitle {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: #ffffff;
+  text-shadow: 0 0 16px rgba(0,255,136,0.7);
+  font-size: clamp(24px, 6vw, 32px);
+  margin: 6px 0 2px 0;
+  text-align: center;
+}
+
+#quizSubtitle {
+  font-family: 'Dancing Script', cursive;
+  color: #00ff88;
+  font-size: 18px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+#quizChoices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 100%;
+  flex: 1;
+  align-content: start;
+}
+
+/* 2-choice layout: centered pair, side-by-side, not corners */
+#quizChoices.layout-2 {
+  grid-template-columns: 1fr 1fr;
+  max-width: 260px;
+  margin: 0 auto;
+  align-content: center;
+}
+
+/* 3-choice layout: triangle — top row of 2, then 1 centered below */
+#quizChoices.layout-3 {
+  grid-template-columns: 1fr 1fr;
+}
+#quizChoices.layout-3 .quizChoice:nth-child(3) {
+  grid-column: 1 / span 2;
+  width: 60%;
+  margin: 0 auto;
+}
+
+.quizChoice {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(0,255,136,0.35);
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+  transition: all 0.6s ease;
+  box-shadow: 0 0 14px rgba(0,255,136,0.15);
+}
+
+.quizChoice img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.quizChoice:hover {
+  border-color: rgba(0,255,136,0.8);
+  transform: scale(1.03);
+}
+
+/* Chosen photo animates to center + grows */
+.quizChoice.chosen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  height: 150px;
+  transform: translate(-50%, -50%) scale(1.1);
+  z-index: 10;
+  border-color: rgba(0,255,136,0.9);
+  box-shadow: 0 0 30px rgba(0,255,136,0.5);
+}
+
+/* Unchosen photos fade out */
+.quizChoice.faded {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+#quizCatWrap {
+  width: 70px;
+  margin-top: auto;
+  filter: drop-shadow(0 0 10px rgba(0,255,136,0.5));
+}
+#quizCatWrap img { width: 100%; display: block; }
+
+#quizCatSpeech {
+  color: #00ff88;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(16px, 4vw, 20px);
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 0 12px rgba(0,255,136,0.9), 0 0 4px rgba(0,0,0,0.8);
+  min-height: 50px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  margin-top: 6px;
 }
