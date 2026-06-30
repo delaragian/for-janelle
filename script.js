@@ -1,3 +1,9 @@
+// ─── PRE-GALAXY MUSIC ───
+const bgMusicPre = new Audio('music2.mp3');
+bgMusicPre.loop = true;
+bgMusicPre.volume = 0.5;
+bgMusicPre.preload = 'auto';
+
 // ─── SCENE SETUP ───
 const canvas = document.getElementById('galaxy');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -1106,12 +1112,6 @@ bgMusic.loop = true;
 bgMusic.volume = 0.5;
 bgMusic.preload = 'auto'; // ← preloads the file in background before tap
 
-// ─── PRE-GALAXY MUSIC (intro/quiz/catch-the-cat) ───
-const bgMusicPre = new Audio('music2.mp3');
-bgMusicPre.loop = true;
-bgMusicPre.volume = 0.5;
-bgMusicPre.preload = 'auto';
-
 function playMusic() {
   bgMusic.play().catch(e => console.log('Music blocked:', e));
 }
@@ -1398,23 +1398,14 @@ function startIntroSequence() {
 
 const tapOverlay = document.getElementById('tapToStart');
 
-function beginExperience() {
+// Always show tap screen — guarantees music plays on all mobile browsers
+tapOverlay.addEventListener('pointerdown', () => {
   tapOverlay.classList.add('hidden');
   setTimeout(() => tapOverlay.remove(), 700);
+  bgMusicPre.volume = 0.5;
   bgMusicPre.play().catch(e => console.log('Pre-music blocked:', e));
   startIntroSequence();
-}
-
-// Try autoplay immediately (works if she clicked a link to open the page)
-bgMusicPre.play().then(() => {
-  // Autoplay succeeded — skip tap screen entirely
-  tapOverlay.classList.add('hidden');
-  setTimeout(() => tapOverlay.remove(), 700);
-  startIntroSequence();
-}).catch(() => {
-  // Autoplay blocked — show tap screen as fallback
-  tapOverlay.addEventListener('pointerdown', beginExperience, { once: true });
-});
+}, { once: true });
 
 // ═══════════════════════════════════════════
 // QUIZ SEQUENCE
