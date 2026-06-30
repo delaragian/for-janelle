@@ -76,33 +76,51 @@ setInterval(cycleDancerLines, 3000);
 // One-time line when the catch-the-cat screen finally appears (after quiz)
 function dancerSayCatchLine() {
   dancerSpecialMessageActive = true;
+  let repeatCount = 0;
+  const maxRepeats = 3;
+
   showDancerLine("Catch this idiot one meow");
-  setTimeout(() => {
-    dancerSpecialMessageActive = false;
+  repeatCount++;
+
+  const repeatInterval = setInterval(() => {
+    if (repeatCount >= maxRepeats) {
+      clearInterval(repeatInterval);
+      dancerSpecialMessageActive = false;
+      dancerLineIndex = 0;
+      cycleDancerLines();
+      return;
+    }
+    showDancerLine("Catch this idiot one meow");
+    repeatCount++;
   }, 3000);
 }
 
 // Click handling
 dancerCat.addEventListener('pointerdown', (e) => {
   e.stopPropagation();
+
+  // Ignore clicks while a special sequence is already playing
+  if (dancerSpecialMessageActive) return;
+
   dancerClickCount++;
   dancerSpecialMessageActive = true;
 
   if (dancerClickCount === 1) {
     showDancerLine("Meow meow meow I'm just dancing");
+    setTimeout(() => {
+      dancerSpecialMessageActive = false;
+      dancerLineIndex = 0;
+    }, 3000);
   } else if (dancerClickCount === 2) {
     showDancerLine("I told you meow meow");
+    setTimeout(() => {
+      dancerSpecialMessageActive = false;
+      dancerLineIndex = 0;
+    }, 3000);
   } else {
-    // After 2 clicks, go back to normal cycling lines
-    dancerSpecialMessageActive = false;
-    cycleDancerLines();
-    return;
+    // 3rd+ click → repeating catch line
+    dancerSayCatchLine();
   }
-
-  // Resume normal cycling 3s after a special click message
-  setTimeout(() => {
-    dancerSpecialMessageActive = false;
-  }, 3000);
 });
 
 let noCount = 0;
@@ -1378,8 +1396,25 @@ function startIntroSequence() {
   });
 }
 
-bgMusicPre.play().catch(e => console.log('Pre-music blocked:', e));
-startIntroSequence();
+const tapOverlay = document.getElementById('tapToStart');
+
+function beginExperience() {
+  tapOverlay.classList.add('hidden');
+  setTimeout(() => tapOverlay.remove(), 700);
+  bgMusicPre.play().catch(e => console.log('Pre-music blocked:', e));
+  startIntroSequence();
+}
+
+// Try autoplay immediately (works if she clicked a link to open the page)
+bgMusicPre.play().then(() => {
+  // Autoplay succeeded — skip tap screen entirely
+  tapOverlay.classList.add('hidden');
+  setTimeout(() => tapOverlay.remove(), 700);
+  startIntroSequence();
+}).catch(() => {
+  // Autoplay blocked — show tap screen as fallback
+  tapOverlay.addEventListener('pointerdown', beginExperience, { once: true });
+});
 
 // ═══════════════════════════════════════════
 // QUIZ SEQUENCE
