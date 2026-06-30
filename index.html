@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For My Mah Love 💚</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Dancing+Script:wght@600&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- CAT SCREEN -->
+<div id="catScreen">
+  <div id="phoneBox">
+    <div class="grass-row" id="grassRow"></div>
+    <div id="runningCat"><img id="catImg" src="cat.gif" /></div>
+    <div id="catSpeech"></div>
+
+    <!-- Speech bubble (hidden until cat is clicked) -->
+    <div id="bubbleBox" class="hidden">
+      <div id="bubbleText">Hehe hi mah love, nadakop gihap ko nimo!<br>It's your yanyan here,<br>want to see some magic? 🐾</div>
+      <div id="bubbleButtons">
+        <button id="btnYes" onclick="handleYes()">Yes! 💚</button>
+        <button id="btnNo" onclick="handleNo()">No 😒</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Transition overlay -->
+  <div id="transitionOverlay"></div>
+
+  <!-- 3D Canvas -->
+  <canvas id="galaxy"></canvas>
+
+  <!-- UI Overlay -->
+  <div id="ui">
+    <p id="zoomMsg">You are my World 🌌</p>
+    <div id="clickHint">Click</div>
+  </div>
+
+  <!-- Love Popup -->
+  <div id="lovePopup">
+    <div id="lovePopupInner">
+      <span id="closePopup">✕</span>
+      <div id="lovePopupContent">
+        <p class="loveTitle">You are my world, Janelle</p>
+
+        <img src="photos/p20.jpg" class="lovePhoto" alt="us" />
+
+        <p class="loveEssay">
+          🌷🌹🌼🌸💐🌻✨ If I could, I would hand these flowers to you in person (Kung pwede lang malusot sa cellphone an kamot haha) bitaw and it makes me want to capture a picture of you nanaman. Since for now we can't always go out and see each other, please I hope you accept these virtual flowers as a small reminder of how much you mean to me. Although uhmm pinaagi lang ni through coding mah love.
+Each flower represents saakong love for you po, an appreciation, and ang gratitude for having you in my life. Thank you for bringing so much happiness, warmth, and color into my world. Parehas anang flowers bloom and grow, my love for you po continues to blossom with every passing day. I may not be the perfect guy for you, but I can be the best guy for you po.
+        </p>
+
+        <img src="photos/p21.jpg" class="lovePhoto" alt="us" />
+
+        <p class="loveEssay">
+          Anyways, mah love, monthsary na nato. Time flies so fast, right?
+
+Today marks another chapter about us, and I honestly can't put into words how grateful I am to have you, in my life po. Sa tanang gi agian nato, every smile, every laugh, every challenge, and every moment we've shared, naging one of the most important parts kana talaga saakong mundo..Thank you for choosing me every single day. Thank you for your patience, your understanding, your love, and your constant support. Thank you for staying even during the days when things weren't easy na about us. Dili man perpekto atong relasyon mah love, pero tinuod unsay naa saato. And that's what makes it so special to me and I appreciate that so much. We've grown together, learned from our mistakes, and continued loving usat usa through it all. I made all this for you. I know it might you feel don't want something celebrate about our day, I understand. I just want you to know that I love you, and I will always be here for you, no matter what.
+
+Be strong, be brave, be patient lang hah, and always have faith in us, okay? Please po. With Papa God, everything is possible. He is always gracious and always will be. There will be days nga lisud talaga, exhausting, and frustrating. But no matter what days may come, always remember we face them side by side. Whatever problems we may have, we'll fix them together hah.
+
+I will always be with you, Janelle. I will always be on your side. Kakampi ko nimo sa tanang pagsubok. I will always be the first person to be there for you, the one who's always going to believe in you, even when others don't. I'm not going anywhere, so don't worry hah. You will always have me, even if you don't ask.
+
+I hope, Janelle, that despite all the times I've hurt you, ma feel nimo, bis gamay lang, how genuine ang akong pag-love for you truly is po. I may have lost the trust you once had in me, but I want you to know that I'm trying my best to become a better person every day. I may not be perfect, I may not always be mature enough, and there are times when I disappoint you times when I make mistakes, do crazy things, and mess up. But cgeh an nako og huna-huna ang mga butang nga akong nabuhat, every single day. I'm doing my best to improve, to grow, and to be more mature pa, for you po.
+
+And Janelle, I want you to know I am one of those people who silently cheers for you. Not to impress you. Not because I expect anything in return. But because I've seen the goodness in you, and I genuinely want life to be kind to you. I want your dreams to come true. I want you to heal from things you never talk about. I want you to become everything you were meant to be. You have a kind heart, a gentle soul, and you continue to choose goodness despite everything you've been through and that is something I truly admire about you, Janelle. You deserve every good thing that's coming your way. And even on the days when you doubt yourself, just know that someone is here, quietly and loudly, cheering for you, and that someone is me.
+
+As a simple guy, all I can truly offer you is my loyalty, my presence, and my love. My heart will always belong to you.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- YouTube Music (hidden) -->
+  <div id="ytMusic"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

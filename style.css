@@ -1,0 +1,322 @@
+/* ─── GLOBAL ─── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #03100a;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ─── CAT SCREEN ─── */
+#catScreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #03100a;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.8s ease;
+}
+
+/* Phone boundary box */
+#phoneBox {
+  position: relative;
+  width: min(390px, 92vw);
+  height: min(720px, 88vh);
+  border: 2px solid rgba(0,255,136,0.25);
+  border-radius: 36px;
+  background: radial-gradient(circle at 50% 40%, #0a2e16 0%, #051a0c 70%, #030f08 100%);
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0,255,136,0.12);
+}
+
+/* Grass field background — base ground color */
+.grass-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  background: #0a3318;
+  overflow: hidden;
+}
+
+/* Individual grass tuft clumps — spiky blades, Pokémon tall-grass style */
+.tuft {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  transform-origin: bottom center;
+  animation: tuftSway 2.2s ease-in-out infinite;
+}
+
+.tuft .spike {
+  position: absolute;
+  bottom: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(to top, #1d6b35, #3ec96a);
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  transform-origin: bottom center;
+}
+
+.tuft .spike:nth-child(1) { left: 2px;  height: 70%; transform: rotate(-14deg); }
+.tuft .spike:nth-child(2) { left: 8px;  height: 100%; transform: rotate(-5deg); }
+.tuft .spike:nth-child(3) { left: 14px; height: 85%; transform: rotate(6deg); }
+.tuft .spike:nth-child(4) { left: 19px; height: 65%; transform: rotate(16deg); }
+
+@keyframes tuftSway {
+  0%, 100% { transform: rotate(-5deg); }
+  50%      { transform: rotate(5deg); }
+}
+
+/* Running cat — JS controlled */
+#runningCat {
+  position: absolute;
+  font-size: 52px;
+  top: 300px;
+  left: 0;
+  cursor: pointer;
+  filter: drop-shadow(0 0 10px rgba(0,255,136,0.5));
+  z-index: 101;
+  user-select: none;
+  line-height: 1;
+}
+
+/* Speech text — fixed at top of phone box */
+#catSpeech {
+  position: absolute;
+  color: #00ff88;
+  font-family: 'Dancing Script', cursive;
+  font-size: 22px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-shadow: 0 0 12px rgba(0,255,136,0.9), 0 0 4px rgba(0,0,0,0.8);
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 102;
+}
+
+/* Speech bubble */
+#bubbleBox {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.85);
+  border: 2px solid rgba(0,255,136,0.5);
+  border-radius: 20px;
+  padding: 28px 36px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(0,255,136,0.3);
+  animation: popIn 0.4s ease;
+  z-index: 200;
+  max-width: 90vw;
+}
+
+#bubbleBox.hidden {
+  display: none;
+}
+
+#bubbleText {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(18px, 4vw, 26px);
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(0,255,136,0.7);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+#bubbleButtons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+#bubbleButtons button {
+  padding: 12px 32px;
+  border: 2px solid rgba(0,255,136,0.6);
+  border-radius: 30px;
+  background: rgba(0,255,136,0.1);
+  color: #ffffff;
+  font-family: 'Dancing Script', cursive;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#bubbleButtons button:hover {
+  background: rgba(0,255,136,0.25);
+  box-shadow: 0 0 20px rgba(0,255,136,0.4);
+  transform: scale(1.05);
+}
+
+@keyframes popIn {
+  0%   { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* ─── TRANSITION OVERLAY ─── */
+#transitionOverlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #000000;
+  z-index: 150;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+/* ─── GALAXY ─── */
+#galaxy {
+  display: none;
+  opacity: 0;
+  transition: opacity 1.8s ease;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+}
+#ui {
+  display: none;
+  opacity: 0;
+  transition: opacity 1.8s ease;
+}
+
+/* ─── CLICK HINT (floats below the glowing heart center) ─── */
+#clickHint {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, 0);
+  color: #ffffff;
+  font-family: 'Dancing Script', cursive;
+  font-size: 20px;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(255,105,180,0.9), 0 0 4px rgba(0,0,0,0.8);
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  animation: hintFadeBounce 2.6s ease-in-out infinite;
+}
+
+@keyframes hintFadeBounce {
+  0%   { opacity: 0;   transform: translate(-50%, 0px); }
+  15%  { opacity: 1;   transform: translate(-50%, 0px); }
+  30%  { opacity: 1;   transform: translate(-50%, -6px); }
+  45%  { opacity: 1;   transform: translate(-50%, 0px); }
+  60%  { opacity: 1;   transform: translate(-50%, -6px); }
+  75%  { opacity: 1;   transform: translate(-50%, 0px); }
+  90%  { opacity: 0;   transform: translate(-50%, 0px); }
+  100% { opacity: 0;   transform: translate(-50%, 0px); }
+}
+
+/* ─── LOVE POPUP ─── */
+#lovePopup {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: opacity 0.6s ease, backdrop-filter 0.6s ease, -webkit-backdrop-filter 0.6s ease;
+}
+
+#lovePopup.visible {
+  opacity: 1;
+  pointer-events: all;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#lovePopupInner {
+  background: rgba(0,0,0,0.85);
+  border: 1px solid rgba(0,255,136,0.4);
+  border-radius: 24px;
+  padding: 26px 22px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(0,255,136,0.3), 0 0 80px rgba(0,255,136,0.1);
+  animation: popIn 0.5s ease;
+  position: relative;
+
+  /* Fit within the phone/viewport and allow scrolling for long content */
+  width: min(420px, 90vw);
+  max-height: 85vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* nicer scrollbar on supporting browsers */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,255,136,0.5) transparent;
+}
+
+#lovePopupInner::-webkit-scrollbar {
+  width: 6px;
+}
+#lovePopupInner::-webkit-scrollbar-thumb {
+  background: rgba(0,255,136,0.5);
+  border-radius: 10px;
+}
+
+#lovePopupContent {
+  margin-top: 10px;
+}
+
+.loveTitle {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(22px, 5vw, 28px);
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(0,255,136,0.8);
+  margin: 0 0 18px 0;
+}
+
+.loveEssay {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(14px, 3.6vw, 16px);
+  line-height: 1.7;
+  color: #f0f0f0;
+  text-align: left;
+  margin: 0 0 20px 0;
+}
+
+.lovePhoto {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 14px;
+  margin: 0 0 20px 0;
+  border: 1px solid rgba(0,255,136,0.3);
+  box-shadow: 0 0 20px rgba(0,255,136,0.2);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#closePopup {
+  position: absolute;
+  top: 10px; right: 16px;
+  color: rgba(255,255,255,0.5);
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+#closePopup:hover { color: #ffffff; }
+
+#catImg {
+  width: 80px;
+  height: auto;
+  display: block;
+}
