@@ -42,8 +42,8 @@ const noLines = [
   "No no no no mah love, like... you sure? 😭",
   "Very very very sure? 💔",
   "VERY VERY VERY VERY sure talaga?? 😤",
-  "Charot lang!! Sure ka ba talaga?? 🥹",
-  "Makulit ka naman!! Last chance ha? 🐾💚",
+  "Charot lang hehe. Sure ka ba talaga?? 🥹",
+  "Makulit ka naman haha. Last chance ha? 🐾💚",
   "Okay fine... pero I love you pa rin 😔💚<br>Click No again if you're a meanie 😤",
   "Okay OKAY alam ko na... 💚 *sigh* just click Yes na please 🥺"
 ];
