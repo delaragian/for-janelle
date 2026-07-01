@@ -1507,13 +1507,6 @@ function startQuiz() {
   requestAnimationFrame(() => { quizScreen.style.opacity = '1'; });
   quizIndex = 0;
   renderQuizItem();
-
-  // Warm up the hidden galaxy render loop now, during the quiz, so it's
-  // already running smoothly by the time "Yes" reveals it later.
-  if (!galaxyLoopStarted) {
-    galaxyLoopStarted = true;
-    animate();
-  }
 }
 
 function renderQuizItem() {
@@ -1521,6 +1514,15 @@ function renderQuizItem() {
   const item = quizData[quizIndex];
   quizTitle.textContent = item.title;
   quizChoicesEl.innerHTML = '';
+
+  // Warm up the hidden galaxy render loop starting at quiz item 3 (index 2),
+  // so the earlier, lighter-weight quiz items stay snappy, while the
+  // galaxy still gets enough time running in the background before "Yes"
+  // reveals it later.
+  if (!galaxyLoopStarted && quizIndex >= 2) {
+    galaxyLoopStarted = true;
+    animate();
+  }
 
   const count = item.choices.length;
   quizChoicesEl.className = '';
