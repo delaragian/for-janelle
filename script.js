@@ -1258,7 +1258,11 @@ if (hintEl) {
   renderer.render(scene, camera);
 }
 
-animate();
+// animate() is now started later, once the quiz screen begins — see
+// startQuiz(). This lets the galaxy render loop warm up quietly in the
+// background during the quiz (instead of during the heavier chase/greet
+// cat intro), so it's already smooth by the time the galaxy is revealed,
+// with no cold-start stutter on the heart formation.
 
 // ─── RESIZE ───
 window.addEventListener('resize', () => {
@@ -1495,12 +1499,21 @@ const quizData = [
 let quizIndex = 0;
 let quizAnswered = false;
 
+let galaxyLoopStarted = false;
+
 function startQuiz() {
   quizScreen.classList.remove('hidden');
   quizScreen.style.opacity = '0';
   requestAnimationFrame(() => { quizScreen.style.opacity = '1'; });
   quizIndex = 0;
   renderQuizItem();
+
+  // Warm up the hidden galaxy render loop now, during the quiz, so it's
+  // already running smoothly by the time "Yes" reveals it later.
+  if (!galaxyLoopStarted) {
+    galaxyLoopStarted = true;
+    animate();
+  }
 }
 
 function renderQuizItem() {
