@@ -3,6 +3,7 @@ const bgMusicPre = new Audio('music2.mp3');
 bgMusicPre.loop = true;
 bgMusicPre.volume = 0.5;
 bgMusicPre.preload = 'auto';
+attachAutoRecovery(bgMusicPre, 'Pre-music');
 
 // ─── PRELOAD INTRO GIFS ───
 // Fetches these now, while the "tap to start" screen is showing, so that
@@ -13,6 +14,55 @@ const preloadChaseCat = new Image();
 preloadChaseCat.src = 'chasecat.gif';
 const preloadGreetCat = new Image();
 preloadGreetCat.src = 'greetcat.gif';
+
+// ─── AUDIO STALL / ERROR RECOVERY ───
+// Covers the OTHER failure mode: music that starts fine but then cuts off
+// mid-playback because the network dips and the audio buffer runs dry.
+// Browsers fire 'waiting' when playback stalls waiting for more data, and
+// 'error' if the browser gives up entirely. This watches for both and
+// nudges playback back on track once the connection recovers, instead of
+// just staying silent.
+function attachAutoRecovery(audioEl, label) {
+  let recoveryTimer = null;
+
+  const clearRecoveryTimer = () => {
+    if (recoveryTimer) {
+      clearTimeout(recoveryTimer);
+      recoveryTimer = null;
+    }
+  };
+
+  // Playback resumed on its own — nothing more to do.
+  audioEl.addEventListener('playing', clearRecoveryTimer);
+
+  // Buffer ran dry mid-playback (classic weak-signal symptom). Browsers
+  // usually auto-resume once more data arrives, but if it hasn't recovered
+  // within a few seconds, nudge it with another play() call.
+  audioEl.addEventListener('waiting', () => {
+    clearRecoveryTimer();
+    recoveryTimer = setTimeout(() => {
+      console.log(`${label} stalled, nudging playback...`);
+      audioEl.play().catch(err => console.log(`${label} nudge failed:`, err));
+    }, 3000);
+  });
+
+  // Harder failure (e.g. connection dropped entirely). Reload the source
+  // and try again once the browser reports it's ready.
+  audioEl.addEventListener('error', () => {
+    console.log(`${label} playback error, attempting reload...`);
+    const wasPlaying = !audioEl.paused;
+    const resumeTime = audioEl.currentTime;
+    audioEl.load();
+    if (wasPlaying) {
+      const resumeOnReady = () => {
+        audioEl.currentTime = resumeTime;
+        audioEl.play().catch(err => console.log(`${label} reload play failed:`, err));
+        audioEl.removeEventListener('canplay', resumeOnReady);
+      };
+      audioEl.addEventListener('canplay', resumeOnReady, { once: true });
+    }
+  });
+}
 
 // ─── ROBUST AUDIO PLAY HELPER ───
 // audioEl.play() can get rejected by the browser if the file hasn't
@@ -1142,6 +1192,7 @@ const bgMusic = new Audio('music.mp3');
 bgMusic.loop = true;
 bgMusic.volume = 0.5;
 bgMusic.preload = 'auto'; // ← preloads the file in background before tap
+attachAutoRecovery(bgMusic, 'Music');
 
 function playMusic() {
   playWithRetry(bgMusic, 'Music');
