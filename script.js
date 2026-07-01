@@ -4,6 +4,37 @@ bgMusicPre.loop = true;
 bgMusicPre.volume = 0.5;
 bgMusicPre.preload = 'auto';
 
+// ─── PRELOAD INTRO GIFS ───
+// Fetches these now, while the "tap to start" screen is showing, so that
+// when the intro later swaps chasecat.gif -> greetcat.gif the new image
+// is already cached and appears instantly instead of lagging behind on
+// a slow connection.
+const preloadChaseCat = new Image();
+preloadChaseCat.src = 'chasecat.gif';
+const preloadGreetCat = new Image();
+preloadGreetCat.src = 'greetcat.gif';
+
+// ─── ROBUST AUDIO PLAY HELPER ───
+// audioEl.play() can get rejected by the browser if the file hasn't
+// buffered enough data yet (common on slow connections). Instead of
+// silently giving up, this retries automatically as soon as the audio
+// reports it's actually ready to play.
+function playWithRetry(audioEl, label) {
+  const attempt = () => audioEl.play().catch(err => {
+    console.log(`${label} blocked, will retry when ready:`, err);
+  });
+
+  attempt();
+
+  const retry = () => {
+    attempt();
+    audioEl.removeEventListener('canplaythrough', retry);
+    audioEl.removeEventListener('canplay', retry);
+  };
+  audioEl.addEventListener('canplaythrough', retry, { once: true });
+  audioEl.addEventListener('canplay', retry, { once: true });
+}
+
 // ─── SCENE SETUP ───
 const canvas = document.getElementById('galaxy');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -489,7 +520,7 @@ function startHeartFormation() {
 
   // Music starts the exact instant the heart begins moving — and now
   // this only fires after the galaxy has fully bloomed into view.
-  bgMusic.play().catch(e => console.log('Music blocked:', e));
+  playWithRetry(bgMusic, 'Music');
 }
 
 function updateHeartFormation() {
@@ -1113,7 +1144,7 @@ bgMusic.volume = 0.5;
 bgMusic.preload = 'auto'; // ← preloads the file in background before tap
 
 function playMusic() {
-  bgMusic.play().catch(e => console.log('Music blocked:', e));
+  playWithRetry(bgMusic, 'Music');
 }
 
 function launchGalaxy() {
@@ -1129,7 +1160,7 @@ function launchGalaxy() {
     uiEl.style.opacity = '1';
   });
 
-  bgMusic.play().catch(e => console.log('Music blocked:', e));
+  playWithRetry(bgMusic, 'Music');
   bgMusic.addEventListener('playing', () => {
     startHeartFormation();
   }, { once: true });
@@ -1398,12 +1429,14 @@ function startIntroSequence() {
 
 const tapOverlay = document.getElementById('tapToStart');
 
-// Always show tap screen — guarantees music plays on all mobile browsers
-document.getElementById('tapBtn').addEventListener('click', () => {
+// Tap ANYWHERE on the overlay to begin (not just the button) — this
+// matches the "tap anywhere to begin" text, and still guarantees music
+// plays on all mobile browsers since it's triggered by a real user tap.
+tapOverlay.addEventListener('click', () => {
   tapOverlay.classList.add('hidden');
   setTimeout(() => tapOverlay.remove(), 700);
   bgMusicPre.volume = 0.5;
-  bgMusicPre.play().catch(e => console.log('Pre-music blocked:', e));
+  playWithRetry(bgMusicPre, 'Pre-music');
   startIntroSequence();
 }, { once: true });
 
